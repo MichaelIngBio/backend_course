@@ -2,6 +2,7 @@ const express = require('express') //Importamos express
 const app = express() //creamos una aplicación express que se guarda en la variable app
 const cors = require('cors')
 
+
 app.use(cors())
 
 let notes =[
@@ -31,7 +32,7 @@ const requestLogger = (request, response, next) => {
 }
 app.use(express.json()) //activación de json-parser
 app.use(requestLogger)
-
+app.use(express.static('dist'))
 /*Se define un controlador de eventos, que se utiliza para manejar las solicitudes HTTP GET realizadas a la raíz '/'
 de la aplicación. La función del controlador de eventos acepta dos parámetros. El perimer parámetro 'request'
 contiene toda la información de la solicitud HTTP y el segundo parámetro 'response' se utiliza para definir
