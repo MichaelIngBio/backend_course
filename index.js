@@ -1,7 +1,20 @@
 const express = require('express') //Importamos express
 const app = express() //creamos una aplicación express que se guarda en la variable app
 const cors = require('cors')
+const mongoose = require('mongoose')
+const password = process.argv[2]
 
+const url = `mongodb+srv://Ingeniero_yo_forever:${password}@cluster0.h5q1ctf.mongodb.net/noteApp?retryWrites=true&w=majority`
+
+mongoose.set('strictQuery', false)
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+    content: String,
+    important: Boolean
+})
+
+const Note = mongoose.model('Note', noteSchema)
 
 app.use(cors())
 
@@ -56,8 +69,25 @@ La solicityd se responed con el método 'json' del objeto 'response'. Llamar al 
 que se le pasó como un string con formato JSON (con Express la transformación se hace de forma automatica).
 Express establece automáticamente la cabecera Conten-Type con el valor apropiado de application/json. 
 */
+/*Sin bases de datos:
 app.get('/api/notes', (request, response) => {
     response.json(notes)
+})*/
+
+//Modificaciones para formatear los objetos devueltos por Mongoose
+noteSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
+})
+
+//Con bases de datos:
+app.get('/api/notes', (request, response) =>{
+    Note.find({}).then(notes =>{
+        response.json(notes)
+    })
 })
 
 /*
